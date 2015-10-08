@@ -11,13 +11,14 @@ check_command() {
     fi
 }
 
-pacstrap /mnt grub os-prober
+check-command pacman
+pacman -S grub os-prober
 if [[ $? != 0 ]]; then
     echo Failed to install GRUB
     exit 10
 fi
 
-for cmd in cat echo cat grep awk sed mkdir ln pacman wget locale-gen mkinitcpio grub-install grub-mkconfig systemctl useradd gpasswd
+for cmd in cat echo cat grep awk sed mkdir ln wget locale-gen mkinitcpio grub-install grub-mkconfig systemctl useradd gpasswd
 do
     check_command $cmd
 done
