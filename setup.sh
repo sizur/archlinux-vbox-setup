@@ -163,7 +163,7 @@ if [[ $? != 0 ]]; then
     exit 9
 fi
 
-pacstrap /mnt base zsh wget grub os-prober # base-devel
+pacstrap /mnt base zsh wget base-devel
 if [[ $? != 0 ]]; then
     echo Failed to bootstrap
     exit 10

@@ -11,19 +11,23 @@ check_command() {
     fi
 }
 
+pacstrap /mnt grub os-prober
+if [[ $? != 0 ]]; then
+    echo Failed to install GRUB
+    exit 10
+fi
+
 for cmd in cat echo cat grep awk sed mkdir ln pacman wget locale-gen mkinitcpio grub-install grub-mkconfig systemctl useradd gpasswd
 do
     check_command $cmd
 done
 
-cp /root/stage2.env /root/stage2.env.bak
-
-sed -i 's/^#$LOCALE/$LOCALE/' /etc/locale.gen
+sed -i "s/^#$LOCALE/$LOCALE/" /etc/locale.gen
 if [[ $? != 0 ]]; then
     echo Failed to modify /etc/locale.gen
     exit 14
 fi
-if [[ $(grep '^$LOCALE') ]]; then
+if [[ $(grep "^$LOCALE" /etc/locale.gen | wc -l) == 0 ]]; then
     echo Failed to modify /etc/locale.gen
     exit 14
 fi
@@ -34,7 +38,7 @@ if [[ $? != 0 ]]; then
     exit 14
 fi
 
-echo "LC_ALL=$LOCALE\nLANG=$LOCALE" > /etc/locale.conf
+echo "LANG=$LOCALE" > /etc/locale.conf
 if [[ $? != 0 ]]; then
     echo Failed to configure locale
     exit 15
