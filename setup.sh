@@ -8,8 +8,8 @@ if [ $USERNAME != root ]; then
     exit 1
 fi
 
-if [ ! -n "${USER+1}" ]; then
-    USER=sizur
+if [ ! -n "${NAMEUSER+1}" ]; then
+    NAMEUSER=sizur
 fi
 
 if [ ! -n "${DEVICE+1}" ]; then
@@ -200,7 +200,7 @@ if [[ $? != 0 ]]; then
     exit 15
 fi
 
-wget -nv -O /mnt/root/stage2.sh https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh && chmod +x /mnt/root/stage2.sh && echo "DEVICE=$DEVICE\nUSER=$USER" > /mnt/root/stage2.env
+wget -nv -O /mnt/root/stage2.sh https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh && chmod +x /mnt/root/stage2.sh && echo "DEVICE=$DEVICE\nNAMEUSER=$NAMEUSER" > /mnt/root/stage2.env
 if [[ $? != 0 ]]; then
     echo Failed to stage2
     exit 16
