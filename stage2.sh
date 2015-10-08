@@ -12,13 +12,13 @@ check_command() {
 }
 
 check-command pacman
-pacman -S grub os-prober
+pacman --noconfirm -S grub os-prober
 if [[ $? != 0 ]]; then
     echo Failed to install GRUB
     exit 10
 fi
 
-for cmd in cat echo cat grep awk sed mkdir ln wget locale-gen mkinitcpio grub-install grub-mkconfig systemctl useradd gpasswd
+for cmd in cat wc echo cat grep awk sed mkdir ln wget locale-gen mkinitcpio grub-install grub-mkconfig systemctl useradd passwd gpasswd
 do
     check_command $cmd
 done
@@ -43,6 +43,14 @@ echo "LANG=$LOCALE" > /etc/locale.conf
 if [[ $? != 0 ]]; then
     echo Failed to configure locale
     exit 15
+fi
+
+if [ $DOMAIN != 0 ]; then
+    echo "option domain-name \"$DOMAIN\"" >> /etc/resolv.conf
+    if [[ $? != 0 ]]; then
+        echo Failed to add domain to /etc/resolve.conf
+        exit 15
+    fi
 fi
 
 mkinitcpio -p linux
@@ -84,6 +92,20 @@ fi
 useradd -m -g users -G wheel,uucp,rfkill,games -s /usr/bin/zsh $NAMEUSER
 if [[ $? != 0 ]]; then
     echo Failed to add user
+    exit 21
+fi
+
+echo Please enter new password for root
+passwd
+if [[ $? != 0 ]]; then
+    echo Failed to set password for root
+    exit 21
+fi
+
+echo Please enter new password for $NAMEUSER
+passwd $NAMEUSER
+if [[ $? != 0 ]]; then
+    echo Failed to set password for $NAMEUSER
     exit 21
 fi
 

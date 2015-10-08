@@ -22,14 +22,18 @@ else
     SWAP_GB=$(( $SWAP_GB + 0 ))
 fi
 
-if [ ! -n "${ROOT_SIZE_GB+1}" ]; then
+if [ ! -n "${ROOT_GB+1}" ]; then
     ROOT_GB=20
 else
-    ROOT_GB=$(( $ROOT_SIZE_GB + 0 ))
+    ROOT_GB=$(( $ROOT_GB + 0 ))
 fi
 
 if [ ! -n "${HOSTNAME+1}" ]; then
     HOSTNAME=arch-vbox
+fi
+
+if [ ! -n "${DOMAIN+1}" ]; then
+    DOMAIN=0 # 0 is special, meaning none.
 fi
 
 if [ ! -n "${TIMEZONE+1}" ]; then
@@ -59,7 +63,7 @@ check_command() {
     fi
 }
 
-for cmd in cat echo cat grep awk sed mkdir ln sgdisk mkswap swapon mkfs.ext4 mount efivar pacstrap genfstab pacman arch-chroot wget locale-gen mkinitcpio
+for cmd in cat wc echo cat grep awk sed mkdir ln sgdisk mkswap swapon mkfs.ext4 mount efivar pacstrap genfstab pacman arch-chroot wget locale-gen mkinitcpio
 do
     check_command $cmd
 done
@@ -187,7 +191,7 @@ if [[ $? != 0 ]]; then
     exit 12
 fi
 
-wget -nv -O /mnt/root/stage2.sh https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh && chmod +x /mnt/root/stage2.sh && echo "DEVICE=$DEVICE\nNAMEUSER=$NAMEUSER\nLOCALE=$LOCALE" > /mnt/root/stage2.env
+wget -nv -O /mnt/root/stage2.sh https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh && chmod +x /mnt/root/stage2.sh && echo "DEVICE=$DEVICE\nNAMEUSER=$NAMEUSER\nLOCALE=$LOCALE\nDOMAIN=$DOMAIN" > /mnt/root/stage2.env
 if [[ $? != 0 ]]; then
     echo Failed to stage2
     exit 16
