@@ -104,7 +104,7 @@ if [[ $? != 0 ]]; then
     exit 5
 fi
 
-sgdisk -n 3:0:+${ROOT_SIZE_GB}G -c 3:"Root" -t 3:8304 $DEVICE
+sgdisk -n 3:0:+${ROOT_GB}G -c 3:"Root" -t 3:8304 $DEVICE
 if [[ $? != 0 ]]; then
     echo Failed to create Root Partition
     exit 5
