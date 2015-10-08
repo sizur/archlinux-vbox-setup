@@ -28,7 +28,7 @@ if [[ $? != 0 ]]; then
     exit 14
 fi
 
-echo LANG=$LOCALE > /mnt/etc/locale.conf
+echo "LC_ALL=$LOCALE\nLANG=$LOCALE" > /etc/locale.conf
 if [[ $? != 0 ]]; then
     echo Failed to configure locale
     exit 15
