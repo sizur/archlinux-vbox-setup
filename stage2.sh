@@ -11,7 +11,7 @@ check_command() {
     fi
 }
 
-for cmd in cat echo cat grep awk sed mkdir ln pacman wget locale-gen mkinitcpio grub-install grub-mkconfig systemctl
+for cmd in cat echo cat grep awk sed mkdir ln pacman wget locale-gen mkinitcpio grub-install grub-mkconfig systemctl useradd gpasswd
 do
     check_command $cmd
 done
@@ -52,4 +52,62 @@ if [[ $? != 0 ]]; then
     exit 21
 fi
 
-reboot
+pacman --noconfirm -S net-tools pkgfile xf86-video-vesa sudo git openssh autofs tmux nfs-utils arch-inall-scripts
+if [[ $? != 0 ]]; then
+    echo Failed to install basics
+    exit 21
+fi
+
+useradd -m -g users -G wheel,uucp,rfkill,games -s /usr/bin/zsh $USER
+if [[ $? != 0 ]]; then
+    echo Failed to add user
+    exit 21
+fi
+
+systemctl enable rpcbind
+if [[ $? != 0 ]]; then
+    echo Failed to enable rpcbind
+    exit 21
+fi
+
+pacman --noconfirm -S xorg-server xorg-server-utils xorg xorg-apps xorg-xinit xterm xorg-xclock ttf-dejavu ttf-droid ttf-inconsolata terminus-font
+if [[ $? != 0 ]]; then
+    echo Failed to install X
+    exit 21
+fi
+
+pacman --noconfirm -S emacs virtualbox-guest-utils xmonad xmonad-contrib pulseaudio pulseaudio-alsa xcompmgr rxvt-unicode urxvt-perls dzen2 conky dmenu weechat
+if [[ $? != 0 ]]; then
+    echo Failed to install emacs,guest-addons,xmonad,sound
+    exit 21
+fi
+
+modprobe -a vboxguest vboxsf vboxvideo
+if [[ $? != 0 ]]; then
+    echo Failed to modprobe vbox
+    exit 21
+fi
+
+sh -c 'echo "vboxguest\nvboxsf\nvboxvideo" > /etc/modules-load.d/virtualbox.conf'
+if [[ $? != 0 ]]; then
+    echo Failed to install vmoxfs module
+    exit 21
+fi
+
+systemctl enable vboxservice.service
+if [[ $? != 0 ]]; then
+    echo Failed to enable vbox service
+    exit 21
+fi
+
+gpasswd --add $USER vboxsf
+if [[ $? != 0 ]]; then
+    echo Failed to add $USER to vboxsf group
+    exit 21
+fi
+
+su $USER -c 'zsh -c "mkdir ~/git && cd git && git clone https://github.com/sizur/dotfiles.git && cd dotfiles && make update && make install"'
+if [[ $? != 0 ]]; then
+    echo Failed final setup
+    exit 21
+fi

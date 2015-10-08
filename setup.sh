@@ -200,7 +200,7 @@ if [[ $? != 0 ]]; then
     exit 15
 fi
 
-wget -nv -O /mnt/root/stage2.sh https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh && chmod +x /mnt/root/stage2.sh && echo DEVICE=$DEVICE > /mnt/root/stage2.env
+wget -nv -O /mnt/root/stage2.sh https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh && chmod +x /mnt/root/stage2.sh && echo "DEVICE=$DEVICE\nUSER=$USER" > /mnt/root/stage2.env
 if [[ $? != 0 ]]; then
     echo Failed to stage2
     exit 16
@@ -211,3 +211,7 @@ if [[ $? != 0 ]]; then
     echo Failed to arch-chroot
     exit 13
 fi
+
+rm /mnt/root/stage2.env
+rm /mnt/root/stage2.sh
+reboot
