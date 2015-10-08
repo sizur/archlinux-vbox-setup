@@ -11,11 +11,11 @@ Setup VirtualBox ArchLinux Guest
 6. Boot the new VM
 7. If you are on Wifi, setup connection with https://wiki.archlinux.org/index.php/Wireless_network_configuration
 8. Remove the ISO if you don't want interactive reboots
-9. run `HOSTNAME=<hostname> USER=<username> zsh -c "$(wget -O - https://goo.gl/mEkAm9)"`
+9. run `HOSTNAME=<hostname> NAMEUSER=<username> zsh -c "$(wget -O - https://goo.gl/mEkAm9)"`
 
 ### Variables
 
-* `USER`: Username. Defaults to `sizur`
+* `NAMEUSER`: Username. Defaults to `sizur`. It's called NAMEUSER to avoid name collision of existing env vars.
 * `DEVICE`: What device to install to. Defaults to `/dev/sda`
 * `SWAP_GB`: Size of swap partition in GiB. Defaults to 2. Assuming no hybernation.
 * `ROOT_SIZE_GB`: Size of the Root partition in GiB. Defaults to 20.

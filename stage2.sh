@@ -58,7 +58,7 @@ if [[ $? != 0 ]]; then
     exit 21
 fi
 
-useradd -m -g users -G wheel,uucp,rfkill,games -s /usr/bin/zsh $USER
+useradd -m -g users -G wheel,uucp,rfkill,games -s /usr/bin/zsh $NAMEUSER
 if [[ $? != 0 ]]; then
     echo Failed to add user
     exit 21
@@ -100,13 +100,13 @@ if [[ $? != 0 ]]; then
     exit 21
 fi
 
-gpasswd --add $USER vboxsf
+gpasswd --add $NAMEUSER vboxsf
 if [[ $? != 0 ]]; then
-    echo Failed to add $USER to vboxsf group
+    echo Failed to add $NAMEUSER to vboxsf group
     exit 21
 fi
 
-su $USER -c 'zsh -c "mkdir ~/git && cd git && git clone https://github.com/sizur/dotfiles.git && cd dotfiles && make update && make install"'
+su $NAMEUSER -c 'zsh -c "mkdir ~/git && cd git && git clone https://github.com/sizur/dotfiles.git && cd dotfiles && make update && make install"'
 if [[ $? != 0 ]]; then
     echo Failed final setup
     exit 21
