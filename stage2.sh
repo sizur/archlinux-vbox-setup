@@ -16,10 +16,22 @@ do
     check_command $cmd
 done
 
+sed -i 's/^#$LOCALE/$LOCALE/' /etc/locale.gen
+if [[ $? != 0 ]]; then
+    echo Failed to modify /etc/locale.gen
+    exit 14
+fi
+
 locale-gen
 if [[ $? != 0 ]]; then
     echo Failed to generate locale
     exit 14
+fi
+
+echo LANG=$LOCALE > /mnt/etc/locale.conf
+if [[ $? != 0 ]]; then
+    echo Failed to configure locale
+    exit 15
 fi
 
 mkinitcpio -p linux

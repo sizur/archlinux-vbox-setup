@@ -188,19 +188,7 @@ if [[ $? != 0 ]]; then
     exit 12
 fi
 
-sed -i 's/^#$LOCALE/$LOCALE/' /mnt/etc/locale.gen
-if [[ $? != 0 ]]; then
-    echo Failed to modify /etc/locale.gen
-    exit 14
-fi
-
-echo LANG=$LOCALE > /mnt/etc/locale.conf
-if [[ $? != 0 ]]; then
-    echo Failed to configure locale
-    exit 15
-fi
-
-wget -nv -O /mnt/root/stage2.sh https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh && chmod +x /mnt/root/stage2.sh && echo "DEVICE=$DEVICE\nNAMEUSER=$NAMEUSER" > /mnt/root/stage2.env
+wget -nv -O /mnt/root/stage2.sh https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh && chmod +x /mnt/root/stage2.sh && echo "DEVICE=$DEVICE\nNAMEUSER=$NAMEUSER\nLOCALE=$LOCALE" > /mnt/root/stage2.env
 if [[ $? != 0 ]]; then
     echo Failed to stage2
     exit 16
