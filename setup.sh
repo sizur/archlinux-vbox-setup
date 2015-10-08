@@ -50,7 +50,6 @@ else
     fi
 fi
 
-
 check_command() {
     local CMD=$1
     command -v $CMD > /dev/null 2>&1;
@@ -164,7 +163,7 @@ if [[ $? != 0 ]]; then
     exit 9
 fi
 
-pacstrap /mnt base base-devel zsh wget grub os-prober
+pacstrap /mnt base zsh wget grub os-prober # base-devel
 if [[ $? != 0 ]]; then
     echo Failed to bootstrap
     exit 10

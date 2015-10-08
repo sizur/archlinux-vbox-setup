@@ -16,8 +16,14 @@ do
     check_command $cmd
 done
 
+cp /root/stage2.env /root/stage2.env.bak
+
 sed -i 's/^#$LOCALE/$LOCALE/' /etc/locale.gen
 if [[ $? != 0 ]]; then
+    echo Failed to modify /etc/locale.gen
+    exit 14
+fi
+if [[ $(grep '^$LOCALE') ]]; then
     echo Failed to modify /etc/locale.gen
     exit 14
 fi
