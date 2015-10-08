@@ -106,7 +106,7 @@ if [[ $? != 0 ]]; then
     exit 21
 fi
 
-su $NAMEUSER -c 'zsh -c "mkdir ~/git && cd git && git clone https://github.com/sizur/dotfiles.git && cd dotfiles && make update && make install"'
+su $NAMEUSER -c 'zsh -c "mkdir ~/git && cd ~/git && git clone https://github.com/sizur/dotfiles.git && cd dotfiles && make update && make install"'
 if [[ $? != 0 ]]; then
     echo Failed final setup
     exit 21
