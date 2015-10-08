@@ -1,5 +1,7 @@
 #!/usr/bin/zsh
 
+source /root/stage2.env
+
 check_command() {
     local CMD=$1
     command -v $CMD > /dev/null 2>&1;
