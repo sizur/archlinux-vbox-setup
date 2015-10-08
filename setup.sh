@@ -128,13 +128,13 @@ if [[ $? != 0 ]]; then
     exit 6
 fi
 
-mkfs.ext4 -L Root ${DEVICE}3
+mkfs.ext4 -q -L Root ${DEVICE}3
 if [[ $? != 0 ]]; then
     echo Failed to format Root partition
     exit 7
 fi
 
-mkfs.ext4 -L Home ${DEVICE}4
+mkfs.ext4 -q -L Home ${DEVICE}4
 if [[ $? != 0 ]]; then
     echo Failed to format Home partition
     exit 7
@@ -200,7 +200,13 @@ if [[ $? != 0 ]]; then
     exit 15
 fi
 
-arch-chroot /mnt '/usr/bin/zsh -c "$(wget -O - https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh)"'
+wget -O /mnt/root/stage2.sh https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh && chmod +x /mnt/root/stage2.sh
+if [[ $? != 0 ]]; then
+    echo Failed to get stage2.sh
+    exit 16
+fi
+
+arch-chroot /mnt /root/stage2.sh
 if [[ $? != 0 ]]; then
     echo Failed to arch-chroot
     exit 13

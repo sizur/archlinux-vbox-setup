@@ -1,3 +1,4 @@
+#!/usr/bin/zsh
 
 check_command() {
     local CMD=$1
