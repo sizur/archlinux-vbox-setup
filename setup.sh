@@ -37,7 +37,7 @@ check_command() {
     fi
 }
 
-for cmd in echo cat grep awk mkdir sgdisk mkswap swapon mkfs.ext4 mount efivar
+for cmd in echo cat grep awk mkdir sgdisk mkswap swapon mkfs.ext4 mount efivar pacstrap genfstab pacman chroot
 do
     check_command $cmd
 done
@@ -62,9 +62,6 @@ fi
 
 RAM_BYTES=$(cat /proc/meminfo | grep MemTotal | awk '{print $2}')
 # SWAP_KB=$(( int( $RAM_BYTES * $SWAP_FACTOR / 1024 ) ))
-
-echo +${RAM_BYTES}K $ROOT_SIZE_GB
-exit 0
 
 sgdisk -og $DEVICE
 if [[ $? != 0 ]]; then
@@ -138,14 +135,20 @@ if [[ $? != 0 ]]; then
     exit 8
 fi
 
-wget -nv -O - 'https://www.archlinux.org/mirrorlist/?protocol=https&ip_version=4&use_mirror_status=on' | sed -e 's/^#//' > /etc/pacman.d/mirrorlist.bak && rankmirrors /etc/pacman.d/mirrorlist.bak > /etc/pacman.d/mirrorlist
+wget -nv -O - 'https://www.archlinux.org/mirrorlist/?protocol=https&ip_version=4&use_mirror_status=on' | egrep 'berkeley|kernel|mtu' | sed -e 's/^#//' > /etc/pacman.d/mirrorlist.bak && rankmirrors /etc/pacman.d/mirrorlist.bak > /etc/pacman.d/mirrorlist
 if [[ $? != 0 ]]; then
     echo Failed to get https mirrors
     exit 9
 fi
 
-# pacstrap /mnt base
-# if [[ $? != 0 ]]; then
-#     echo Failed to bootstrap
-#     exit 9
-# fi
+pacstrap /mnt base
+if [[ $? != 0 ]]; then
+    echo Failed to bootstrap
+    exit 10
+fi
+
+genfstab -U -p /mnt > /mnt/etc/fstab
+if [[ $? != 0 ]]; then
+    echo Failed to copy fstab
+    exit 11
+fi
