@@ -9,7 +9,7 @@ check_command() {
     fi
 }
 
-for cmd in cat echo cat grep awk sed mkdir ln pacman wget locale-gen mkinitcpio
+for cmd in cat echo cat grep awk sed mkdir ln pacman wget locale-gen mkinitcpio grub-install grub-mkconfig systemctl
 do
     check_command $cmd
 done
@@ -26,18 +26,7 @@ if [[ $? != 0 ]]; then
     exit 16
 fi
 
-pacman --noconfirm -S grub os-prober
-if [[ $? != 0 ]]; then
-    echo Failed to install GRUB package
-    exit 17
-fi
-
-for cmd in grub-install grub-mkconfig systemctl
-do
-    check_command $cmd
-done
-
-grub-install --recheck
+grub-install --recheck $DEVICE
 if [[ $? != 0 ]]; then
     echo Failed to install GRUB
     exit 18
