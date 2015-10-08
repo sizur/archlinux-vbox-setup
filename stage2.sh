@@ -52,7 +52,7 @@ if [[ $? != 0 ]]; then
     exit 21
 fi
 
-pacman --noconfirm -S net-tools pkgfile xf86-video-vesa sudo git openssh autofs tmux nfs-utils arch-inall-scripts
+pacman --noconfirm -S net-tools pkgfile xf86-video-vesa sudo git openssh autofs tmux nfs-utils arch-install-scripts
 if [[ $? != 0 ]]; then
     echo Failed to install basics
     exit 21
