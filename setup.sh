@@ -60,7 +60,7 @@ check_command() {
     fi
 }
 
-for cmd in cat echo cat grep awk sed mkdir ln sgdisk mkswap swapon mkfs.ext4 mount efivar pacstrap genfstab pacman arch-chroot locale-gen mkinitcpio
+for cmd in cat echo cat grep awk sed mkdir ln sgdisk mkswap swapon mkfs.ext4 mount efivar pacstrap genfstab pacman arch-chroot wget locale-gen mkinitcpio
 do
     check_command $cmd
 done
@@ -164,7 +164,7 @@ if [[ $? != 0 ]]; then
     exit 9
 fi
 
-pacstrap /mnt base
+pacstrap /mnt base zsh wget
 if [[ $? != 0 ]]; then
     echo Failed to bootstrap
     exit 10
@@ -188,69 +188,20 @@ if [[ $? != 0 ]]; then
     exit 12
 fi
 
-arch-chroot /mnt
-if [[ $? != 0 ]]; then
-    echo Failed to arch-chroot
-    exit 13
-fi
-
-sed -i 's/^#$LOCALE/$LOCALE/' /etc/locale.gen
+sed -i 's/^#$LOCALE/$LOCALE/' /mnt/etc/locale.gen
 if [[ $? != 0 ]]; then
     echo Failed to modify /etc/locale.gen
     exit 14
 fi
 
-locale-gen
-if [[ $? != 0 ]]; then
-    echo Failed to generate locale
-    exit 14
-fi
-
-echo LANG=$LOCALE > /etc/locale.conf
+echo LANG=$LOCALE > /mnt/etc/locale.conf
 if [[ $? != 0 ]]; then
     echo Failed to configure locale
     exit 15
 fi
 
-mkinitcpio -p linux
+arch-chroot /mnt '/usr/bin/zsh -c "$(wget -O - https://raw.githubusercontent.com/sizur/archlinux-vbox-setup/master/stage2.sh)"'
 if [[ $? != 0 ]]; then
-    echo Failed to create initcpio
-    exit 16
+    echo Failed to arch-chroot
+    exit 13
 fi
-
-pacman --noconfirm -S grub os-prober
-if [[ $? != 0 ]]; then
-    echo Failed to install GRUB package
-    exit 17
-fi
-
-for cmd in grub-install grub-mkconfig systemctl
-do
-    check_command $cmd
-done
-
-grub-install --recheck
-if [[ $? != 0 ]]; then
-    echo Failed to install GRUB
-    exit 18
-fi
-
-grub-mkconfig -o /boot/grub/grub.cfg
-if [[ $? != 0 ]]; then
-    echo Failed to configure GRUB
-    exit 19
-fi
-
-echo SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"`ip addr show \`ls /sys/class/net --color=never | egrep "^wl|^en"\` | grep link/ | awk '{print $2}'`\", NAME=\"net1\" > /etc/udev/rules.d/10-network.rules && cat /etc/udev/rules.d/10-network.rules
-if [[ $? != 0 ]]; then
-    echo Failed to rename network device to net1
-    exit 20
-fi
-
-systemctl enable dhcpcd@net1.service
-if [[ $? != 0 ]]; then
-    echo Failed to enable net1
-    exit 21
-fi
-
-reboot
