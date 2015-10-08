@@ -52,7 +52,7 @@ if [[ $? != 0 ]]; then
     exit 21
 fi
 
-pacman --noconfirm -S net-tools pkgfile xf86-video-vesa sudo git openssh autofs tmux nfs-utils arch-install-scripts
+pacman --noconfirm -S net-tools pkgfile xf86-video-vesa sudo git openssh autofs tmux nfs-utils arch-install-scripts rsync
 if [[ $? != 0 ]]; then
     echo Failed to install basics
     exit 21
@@ -70,7 +70,7 @@ if [[ $? != 0 ]]; then
     exit 21
 fi
 
-pacman --noconfirm -S xorg-server xorg-server-utils xorg xorg-apps xorg-xinit xterm xorg-xclock ttf-dejavu ttf-droid ttf-inconsolata terminus-font
+pacman --noconfirm -S xorg-server xorg-server-utils xorg xorg-apps xorg-xinit xterm xorg-xclock xorg-xlsfonts ttf-dejavu ttf-droid ttf-inconsolata terminus-font
 if [[ $? != 0 ]]; then
     echo Failed to install X
     exit 21
