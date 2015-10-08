@@ -37,7 +37,7 @@ check_command() {
     fi
 }
 
-for cmd in echo cat grep awk mkdir sgdisk mkswap swapon mkfs.ext4 mount # efivar
+for cmd in echo cat grep awk mkdir sgdisk mkswap swapon mkfs.ext4 mount efivar
 do
     check_command $cmd
 done
@@ -51,6 +51,12 @@ fi
 sgdisk -p $DEVICE > /dev/null 2>&1
 if [[ $? != 0 ]]; then
     echo Bad device: $DEVICE
+    exit 4
+fi
+
+ping -c 1 kernel.org > /dev/null 2>&1
+if [[ $? != 0 ]]; then
+    echo No connection!
     exit 4
 fi
 
@@ -131,3 +137,15 @@ if [[ $? != 0 ]]; then
     echo Failed to mount Home
     exit 8
 fi
+
+wget -nv -O - 'https://www.archlinux.org/mirrorlist/?protocol=https&ip_version=4&use_mirror_status=on' | sed -e 's/^#//' > /etc/pacman.d/mirrorlist.bak && rankmirrors /etc/pacman.d/mirrorlist.bak > /etc/pacman.d/mirrorlist
+if [[ $? != 0 ]]; then
+    echo Failed to get https mirrors
+    exit 9
+fi
+
+# pacstrap /mnt base
+# if [[ $? != 0 ]]; then
+#     echo Failed to bootstrap
+#     exit 9
+# fi
