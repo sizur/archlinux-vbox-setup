@@ -121,6 +121,11 @@ else
   fi
 fi
 eos
+chmod +x /root/stage2.sudo
+if [[ $? != 0 ]]; then
+    echo Failed to change sudoers
+    exit 100
+fi
 /root/stage2.sudo
 if [[ $? != 0 ]]; then
     echo Failed to change sudoers
